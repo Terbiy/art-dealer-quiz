@@ -7,8 +7,11 @@
 ////////////
 // Mixins //
 ////////////
-.bordered() {
-  border: 1px solid @grey;
+.bordered(@top: 1px; @right: 1px; @bottom: 1px; @left: 1px; @color: transparent) {
+  border-top: @top solid @color;
+  border-right: @right solid @color;
+  border-bottom: @bottom solid @color;
+  border-left: @left solid @color;
 }
 
 // Flexbox
@@ -55,6 +58,15 @@
           align-self: @align;
 }
 
+// Other
+.backface-visibility(@vis: hidden) {
+  -webkit-backface-visibility: hidden;
+     -moz-backface-visibility: hidden;
+      -ms-backface-visibility: hidden;
+       -o-backface-visibility: hidden;
+          backface-visibility: hidden;
+}
+
 ///////////////
 // Main part //
 ///////////////
@@ -63,10 +75,6 @@ body {
   position: relative;
   margin: 0;
   font-family: Verdana, Geneva, sans-serif;
-}
-
-div {
-  .bordered;
 }
 
 .main-wrapper {
@@ -87,11 +95,41 @@ div {
   -ms-flex-pack: justify;
   .align-items(center);
 
+
   .art {
-    // width: 100%;
-    max-width: 100%;
-    // height: auto;
-    // max-height: 100%;
+    position: relative;
+    width: 50%;
+    line-height: 0;
+
+    .bordered(2px, 0, 0, 0);
+
+    transition: all 1s ease;
+
+    // Сохранение трёхмерности для потомков дочерних элементов.
+    transform-style: preserve-3d;
+
+    &:hover, &:focus {
+      transform: rotateY(-180deg);
+      .bordered(2px, 0, 0, 0, @grey);
+      outline: none;
+    }
+
+    > * {
+      .backface-visibility;
+    }
+
+    .image {
+      width: 100%;      
+    }
+
+    .info {
+      position: absolute;
+      top: 0;
+      left: 0;
+      line-height: 1em;
+      transform: rotateY(-180deg );
+      z-index: 10;
+    }
   }
 }
 
@@ -99,6 +137,8 @@ div {
   .flexbox;
   .justify-content(center);
   .align-items(center);
+  
+  perspective: 800px;
 
   &.img-container {
     height: 50vh;
@@ -143,13 +183,11 @@ div {
 @media (min-width: 768px) {
   .central-elem {
     &.img-container {
-      // .flex-grow(5);
 
       width: 40%;
     }
 
     &.central-mark {
-      // .flex-grow(1);
     }
 
     margin: 1em;
